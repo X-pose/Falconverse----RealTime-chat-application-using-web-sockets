@@ -34,7 +34,7 @@ export default function Home() {
               value={roomId}
               onChange={(e) => setRoomId(e.target.value)}
               placeholder="Enter Room ID"
-              className="w-full p-2 border rounded mb-2"
+              className="w-full p-2 border rounded mb-2 text-gray-600"
             />
             <button
               onClick={handleJoinRoom}

@@ -28,6 +28,7 @@ app.prepare().then(() => {
       socket.join(roomId);
       console.log("Room created:", roomId);
       socket.emit("room-created", roomId);
+      socket.emit("room-joined", roomId)
     });
 
     socket.on("join-room", (roomId) => {
