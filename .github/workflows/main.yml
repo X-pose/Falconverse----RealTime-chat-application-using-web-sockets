@@ -10,7 +10,7 @@ env:
   REGISTRY: docker.io
   # GitHub repository name
   REPOSITORY_NAME: falconverse-chatapp
-  # Docker Hub username (you'll need to set this in GitHub secrets)
+  
   DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18'
+          node-version: '20'
           cache: 'npm'
       
       - name: Install dependencies
@@ -41,16 +41,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-      
-      - name: Generate image metadata
-        id: meta
-        uses: docker/metadata-action@v4
-        with:
-          images: ${{ env.DOCKER_HUB_USERNAME }}/${{ env.REPOSITORY_NAME }}
-          tags: |
-            type=raw,value=latest
-            type=sha,format=short
-      
+    
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
