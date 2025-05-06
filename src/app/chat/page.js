@@ -52,7 +52,7 @@ function ChatContent() {
   }, [keyPair]);
 
   const socketInitializer = async () => {
-    socketRef.current = io("http://localhost:3000");
+    socketRef.current = io("https://falconverse-chat-app.onrender.com/");
     const socket = socketRef.current;
 
     socket.on("connect", () => {
