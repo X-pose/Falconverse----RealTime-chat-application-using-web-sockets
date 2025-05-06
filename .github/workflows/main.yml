@@ -3,15 +3,8 @@ name: Build and Publish Docker Image
 on:
   push:
     branches: [ main ]  # Trigger on push to main or master branch
+ 
   workflow_dispatch:  # Allows manual triggering from GitHub UI
-
-env:
-  # Use docker.io for Docker Hub
-  REGISTRY: docker.io
-  # GitHub repository name
-  REPOSITORY_NAME: falconverse-chatapp
-  
-  DOCKER_HUB_USERNAME: ${{ secrets.DOCKER_HUB_USERNAME }}
 
 jobs:
   build-and-push:
@@ -41,13 +34,25 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_TOKEN }}
-    
+      
+      # Define image name directly
+      - name: Set image name
+        id: image-name
+        run: |
+          echo "IMAGE_NAME=${{ secrets.DOCKER_HUB_USERNAME }}/falconverse-chatapp" >> $GITHUB_ENV
+      
+      # Get short SHA for tag
+      - name: Get short SHA
+        id: sha
+        run: echo "SHORT_SHA=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+      
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
           push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ env.SHORT_SHA }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
