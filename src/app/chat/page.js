@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useRef } from "react";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import io from "socket.io-client";
 import {
   generateKeyPair,
@@ -11,7 +12,8 @@ import {
   importPublicKey,
 } from "../../lib/crypto";
 
-export default function Chat() {
+// Create a client component that uses useSearchParams
+function ChatContent() {
   const searchParams = useSearchParams();
   const create = searchParams.get("create");
   const roomId = searchParams.get("roomId");
@@ -20,11 +22,11 @@ export default function Chat() {
   const [currentRoomId, setCurrentRoomId] = useState("");
   const [keyPair, setKeyPair] = useState(null);
   const [otherPublicKey, setOtherPublicKey] = useState(null);
-  
+
   // Use refs to access latest state in event callbacks
   const socketRef = useRef(null);
   const currentRoomIdRef = useRef(currentRoomId);
-  
+
   // Keep the ref updated with the latest value
   useEffect(() => {
     currentRoomIdRef.current = currentRoomId;
@@ -38,9 +40,9 @@ export default function Chat() {
   // Initialize socket after keys are generated
   useEffect(() => {
     if (!keyPair) return;
-    
+
     socketInitializer();
-    
+
     // Cleanup function
     return () => {
       if (socketRef.current) {
@@ -54,7 +56,6 @@ export default function Chat() {
     const socket = socketRef.current;
 
     socket.on("connect", () => {
-      
       if (create) {
         socket.emit("create-room");
       } else if (roomId) {
@@ -63,12 +64,10 @@ export default function Chat() {
     });
 
     socket.on("room-created", (id) => {
-      
       setCurrentRoomId(id);
     });
 
     socket.on("room-joined", async (id) => {
-      
       setCurrentRoomId(id);
       // After room is joined, share public key
       const exportedKey = await exportPublicKey(keyPair.publicKey);
@@ -80,7 +79,6 @@ export default function Chat() {
     });
 
     socket.on("user-joined", async () => {
-      
       // Always use the ref to get the latest value
       if (currentRoomIdRef.current) {
         const exportedKey = await exportPublicKey(keyPair.publicKey);
@@ -98,7 +96,7 @@ export default function Chat() {
       if (senderId === socket.id) {
         return; // Ignore messages sent by self
       }
-      
+
       if (msg.type === "public-key") {
         const importedKey = await importPublicKey(msg.key);
         setOtherPublicKey(importedKey);
@@ -120,7 +118,6 @@ export default function Chat() {
     try {
       const keys = await generateKeyPair();
       setKeyPair(keys);
-     
     } catch (error) {
       console.error("Failed to generate key pair:", error);
     }
@@ -135,7 +132,7 @@ export default function Chat() {
       });
       return;
     }
-    
+
     try {
       const encrypted = await encryptMessage(otherPublicKey, message);
       socketRef.current.emit("send-message", {
@@ -143,7 +140,7 @@ export default function Chat() {
         message: encrypted,
         senderId: socketRef.current.id,
       });
-      
+
       setMessages((prev) => [
         ...prev,
         { text: message, sender: socketRef.current.id },
@@ -165,9 +162,8 @@ export default function Chat() {
         {messages.map((msg, index) => (
           <div
             key={index}
-            className={`mb-2 text-black p-2 rounded ${
-              msg.sender === socketRef.current?.id ? "bg-blue-200 ml-auto" : "bg-gray-200"
-            } max-w-xs`}
+            className={`mb-2 text-black p-2 rounded ${msg.sender === socketRef.current?.id ? "bg-blue-200 ml-auto" : "bg-gray-200"
+              } max-w-xs`}
           >
             {msg?.text || "Message not available"}
           </div>
@@ -185,15 +181,23 @@ export default function Chat() {
         <button
           onClick={sendMessage}
           disabled={!otherPublicKey || !currentRoomId}
-          className={`p-2 rounded-r ${
-            otherPublicKey && currentRoomId 
-              ? "bg-blue-500 text-white" 
+          className={`p-2 rounded-r ${otherPublicKey && currentRoomId
+              ? "bg-blue-500 text-white"
               : "bg-gray-300 text-gray-500"
-          }`}
+            }`}
         >
           Send
         </button>
       </div>
     </div>
+  );
+}
+
+// Main component that properly wraps the content in Suspense
+export default function Chat() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <ChatContent />
+    </Suspense>
   );
 }
