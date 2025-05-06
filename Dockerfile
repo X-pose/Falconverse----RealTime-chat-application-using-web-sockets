@@ -1,4 +1,4 @@
-# Use Node.js LTS as the base image
+# Use Node.js 20 as the base image
 FROM node:20-alpine AS builder
 
 # Set the working directory
@@ -30,8 +30,15 @@ COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/node_modules ./node_modules
 
+# Next.js-specific files
+COPY --from=builder /app/next.config.mjs ./
+
+
+# Copy your custom server.js file
+COPY --from=builder /app/server.js ./
+
 # Expose the port the app runs on
 EXPOSE 3000
 
-# Start the application
-CMD ["npm", "run","start"]
+# Start the application using your custom server
+CMD ["npm", "run", "start"]
