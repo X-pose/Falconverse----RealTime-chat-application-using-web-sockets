@@ -337,7 +337,7 @@ function ChatContent() {
 
   const copyRoomInvite = () => {
     if (currentRoomId) {
-      navigator.clipboard.writeText(`https://falconverse-chat-app.onrender.com/?invite=${currentRoomId}`)
+      navigator.clipboard.writeText(`https://falconverse-chat-app.onrender.com/chat?invite=${currentRoomId}`)
         .then(() => {
           console.log('Room invite copied to clipboard');
           setCopyLinkSuccess(true);
