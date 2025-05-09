@@ -107,4 +107,3 @@ Contributions are welcome! To contribute:
 - Built with [Next.js](https://nextjs.org/) and [Socket.IO](https://socket.io/).
 - Containerized with Docker [Docker](https://www.docker.com/)
 - Deployed on [Render](https://render.com/).
-- System diagram generated with [Mermaid](https://mermaid-js.github.io/).
