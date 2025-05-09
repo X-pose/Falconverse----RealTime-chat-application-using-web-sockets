@@ -366,12 +366,13 @@ function ChatContent() {
     }
   }
 
+
   const renderAvatar = (profileData) => {
     return (
       <div className="flex w-full justify-center py-4 items-center">
         <div className="flex justify-center items-center flex-col -top-[55px] left-0 right-0 w-full">
           <div dangerouslySetInnerHTML={{ __html: profileData?.avatarSvg }}
-            className="w-[110px] h-[110px] rounded-full shadow-[0px_0px_4px_1px_var(--light-gray)]"
+            className=" w-[50px] h-[50px] sm:w-[90px] sm:h-[90px]  p-[4px] sm:p-[px] lg:p-[15px] lg:w-[110px] lg:h-[110px] rounded-full shadow-[0px_0px_4px_1px_var(--light-gray)]"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -379,11 +380,11 @@ function ChatContent() {
               borderRadius: '50%',
               backgroundColor: 'white',
               overflow: 'hidden',
-              padding: '15px',
-              width: '110px',
+              
+              
             }}
           />
-          <span className="text-dark-gray font-bold mt-2 text-lg cursor-default">
+          <span className="text-dark-gray font-bold mt-2 text-sm sm:text-xl lg:text-lg cursor-default">
             {profileData?.name.replace('-', ' ')}
           </span>
         </div>
@@ -393,24 +394,24 @@ function ChatContent() {
 
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
-      <Header activeComponent={"chat"} />
+      <Header activeComponent={"chat"} setActiveComponent={leaveRoom} />
       <div className="moc-container flex flex-col bg-gray-100">
         {otherProfile && usersInRoom ? renderAvatar(otherProfile) : renderAvatar(profile)}
-
-        <div className="flex justify-center text-center relative py-2 my-2 items-center">
-          <p className="w-full" dangerouslySetInnerHTML={{
+        <p className=" text-sm py-2 sm:text-lg lg:w-full text-center lg:py-2" dangerouslySetInnerHTML={{
             __html: otherProfile && usersInRoom
               ? `You're now chatting with <strong> ${otherProfile?.name.replace('-', ' ')} </strong>`
               : 'No other users in the chat room yet. Hang on a bit'
           }} />
+        <div className="flex justify-center text-center relative py-2 my-4 items-center">
+          
           <div className="absolute z-20 left-0">
             <div className="">
-              <h1 className="text-xl text-dark-gray ">
+              <h1 className=" text-sm sm:text-xl text-dark-gray ">
                 Room Id:<strong>  {currentRoomId || 'Connecting...'}</strong>
               </h1>
             </div>
           </div>
-          <button onClick={leaveRoom} className="absolute z-20 cursor-pointer right-0 w-fit h-fit py-2 px-4 bg-red-700 text-nowrap rounded-lg text-white">
+          <button onClick={leaveRoom} className="absolute text-sm sm:text-lg z-20 cursor-pointer right-0 w-fit h-fit py-1 px-4 bg-red-700 text-nowrap rounded-lg text-white">
             Leave Room
           </button>
         </div>
@@ -422,7 +423,7 @@ function ChatContent() {
                 
                   <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
                     <div
-                      className={`w-fit min-w-[100px] px-2 py-1 rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
+                      className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
                     >
                       {msg?.text || "Message not available"}
                     </div>

@@ -36,17 +36,17 @@ const Header = ({ activeComponent, setActiveComponent }) => {
                             width={48}
                             height={48}
                             unoptimized={true}
-                            className="rounded-full"
+                            className="rounded-full w-[24px] h-[24px] sm:w-[64px] sm:h-[64px] lg:w-[48px] lg:h-[48px]"
                         />
-                        <div className='ml-4'>
-                            <h2 className="text-3xl font-[700] fal-dark-gray">Falconverse</h2>
-                            <p className="text-sm fal-light-gray">Privacy focused chat app</p>
+                        <div className='ml-2 lg:ml-4'>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-[700] fal-dark-gray">Falconverse</h2>
+                            <p className=" text-xs sm:text-sm lg:text-sm fal-light-gray">Privacy focused chat app</p>
                         </div>
                         </div>
                         
 
                         {/* Navigation */}
-                        <nav className="flex items-center h-full ml-8">
+                        <nav className="hidden sm:flex items-center h-full sm:ml-12 lg:ml-8">
                             <div
                                 onClick={() => handleActiveComponentChange('home')}
                                 className={`px-3 text-lg text-center cursor-pointer items-center flex h-full ${activeComponent === 'home'
@@ -72,9 +72,9 @@ const Header = ({ activeComponent, setActiveComponent }) => {
 
                     {/* User Profile */}
                     <div className="flex items-center">
-                        <span className="text-dark-gray mr-2 font-bold text-lg cursor-default">{profile?.name.replace('-', ' ')}</span>
+                        <span className="text-dark-gray mr-1 sm:mr-2 font-bold text-sm sm:text-lg cursor-default">{profile?.name.replace('-', ' ')}</span>
                         <div dangerouslySetInnerHTML={{ __html: profile?.avatarSvg }} 
-                            className="w-10 h-10 rounded-full" // Add width and height
+                            className=" w-5 h-5 sm:w-10 sm:h-10 rounded-full" // Add width and height
                             style={{
                                  display: 'flex',
                                  alignItems: 'center',
@@ -82,7 +82,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
                                  borderRadius: '50%',
                                  backgroundColor: 'white',
                                  overflow: 'hidden',
-                                 width: '40px', // Set a fixed width
+                                  // Set a fixed width
                              }}
                         />
                     </div>

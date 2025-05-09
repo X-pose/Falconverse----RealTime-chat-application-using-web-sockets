@@ -135,33 +135,33 @@ export default function Home() {
 
         {activeComponent === "home" && (<div className="min-h-screen flex items-center justify-center ">
 
-          <div className="flex justify-center items-center w-full">
-            <div className="flex flex-col items-start justify-start lg:w-[60%]">
-              <h3 className=" text-light-gray text-3xl mb-2">We deliver</h3>
+          <div className="flex lg:flex-row flex-col justify-center items-center w-full">
+            <div className="flex flex-col items-center lg:items-start justify-start w-full lg:w-[60%]">
+              <h3 className=" text-light-gray text-xl sm:text-4xl lg:text-3xl mb-2">We deliver</h3>
 
               <h2
                 ref={el => textRefs.current[0] = el}
-                className="scramble-text-original text-dark-gray text-7xl font-bold"
+                className="scramble-text-original text-dark-gray  text-3xl sm:text-5xl lg:text-7xl font-bold"
               >
                 5sd2d28a 54sdafd4gh,
               </h2>
               <h2
                 ref={el => textRefs.current[1] = el}
-                className="scramble-text-original text-dark-gray text-7xl font-bold"
+                className="scramble-text-original text-dark-gray text-3xl sm:text-5xl lg:text-7xl font-bold"
               >
                 aesdss655 f138f,
               </h2>
               <h2
                 ref={el => textRefs.current[2] = el}
-                className="scramble-text-original text-dark-gray text-7xl font-bold"
+                className="scramble-text-original text-dark-gray text-3xl sm:text-5xl lg:text-7xl font-bold"
               >
                 7551f6a3 6cafdwr45t
               </h2>
-              <p className="text-light-gray text-3xl mt-6">Real-time messaging wrapped in military-grade encryption - delivered without a trace</p>
+              <p className="text-light-gray text-xl text-center sm:text-4xl lg:text-start lg:text-3xl mt-6">Real-time messaging wrapped in military-grade encryption - delivered without a trace</p>
 
-              <button onClick={handleLetsChat} className="bg-[var(--dark-gray)] mt-8 text-white px-4 py-1.5 cursor-pointer rounded-full border-2 border-[var(--dark-gray)] hover:bg-transparent hover:text-[var(--dark-gray)] transition-all duration-300 ">Let&apos;s Chat <i className="ml-2 fa-regular fa-paper-plane"></i></button>
+              <button onClick={handleLetsChat} className="bg-[var(--dark-gray)] mt-8 text-white px-4 py-1.5 sm:text-2xl lg:text-xl cursor-pointer rounded-full border-2 border-[var(--dark-gray)] hover:bg-transparent hover:text-[var(--dark-gray)] transition-all duration-300 ">Let&apos;s Chat <i className="ml-2 fa-regular fa-paper-plane"></i></button>
             </div>
-            <div className="flex justify-center items-center h-full lg:w-[40%]">
+            <div className="flex mt-5 lg:mt-0 justify-center items-center h-full lg:w-[40%]">
               <Image
                 src="/hero.webp"
                 alt="hero"
@@ -236,7 +236,7 @@ export default function Home() {
             </div>
             <div className="flex absolute inset-0 z-50 justify-center items-center w-full">
 
-              <div className="bg-white opacity-100 relative p-8 rounded-lg shadow-[0_0_4px_0.01px_var(--light-gray)] w-full max-w-md">
+              <div className="bg-white opacity-100 relative p-8 rounded-lg shadow-[0_0_4px_0.01px_var(--light-gray)] w-full moc-container max-w-md">
                 <i onClick={closeJoinPopup} className="cursor-pointer fa-regular fa-x absolute z-50 top-0 right-0 bg-white rounded-full p-4"></i>
                 <div className="absolute flex justify-center items-center flex-col z-20 -top-[55px] left-0 right-0 w-full">
 
