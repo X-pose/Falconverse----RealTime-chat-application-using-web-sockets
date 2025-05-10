@@ -100,7 +100,7 @@ function ChatContent() {
       if (joinRoomId || invitedRoomId) {
         let roomId = joinRoomId || invitedRoomId;
         // Join room with username as separate parameters
-        
+
         socket.emit("join-room", {
           roomId: roomId,
           profile: profile
@@ -114,17 +114,17 @@ function ChatContent() {
     });
 
     socket.on("room-created", (id) => {
-      
+
 
       setCurrentRoomId(id);
       setOpenCreatePopup(true);
       setCopySuccess(false);
       setCopyLinkSuccess(false);
-      
+
     });
 
     socket.on("room-joined", async (id, creatorProfile) => {
-      
+
       setCurrentRoomId(id);
 
       // If not creator, set the other profile to creator's profile
@@ -134,7 +134,7 @@ function ChatContent() {
 
       // After room is joined, share public key
       const exportedKey = await exportPublicKey(keyPair.publicKey);
-      
+
       socket.emit("send-message", {
         roomId: id,
         message: { type: "public-key", key: exportedKey },
@@ -144,7 +144,7 @@ function ChatContent() {
     });
 
     socket.on("user-joined", async ({ userId, profile: joinedProfile, timestamp }) => {
-      
+
       const username = joinedProfile?.name.replace("-", " ");
       otherUserNameRef.current = username;
 
@@ -163,7 +163,7 @@ function ChatContent() {
       // Always use the ref to get the latest value
       if (currentRoomIdRef.current) {
         const exportedKey = await exportPublicKey(keyPair.publicKey);
-        
+
         socket.emit("send-message", {
           roomId: currentRoomIdRef.current,
           message: { type: "public-key", key: exportedKey },
@@ -176,7 +176,7 @@ function ChatContent() {
     });
 
     socket.on("user-left", ({ userId, username, timestamp }) => {
-      
+
       setOtherProfile(null);
       setOtherPublicKey(null);
       setUsersInRoom(false);
@@ -194,7 +194,7 @@ function ChatContent() {
     });
 
     socket.on("receive-message", async ({ message: msg, senderId, timestamp, username, profile: senderProfile }) => {
-      
+
       if (senderId === socket.id) {
         return; // Ignore messages sent by self
       }
@@ -229,9 +229,9 @@ function ChatContent() {
 
   const generateKeys = async () => {
     try {
-     
+
       const keys = await generateKeyPair();
-      
+
       setKeyPair(keys);
     } catch (error) {
       console.error("Failed to generate key pair:", error);
@@ -355,13 +355,13 @@ function ChatContent() {
     setOpenCreatePopup(false);
     setCopySuccess(false);
     setCopyLinkSuccess(false);
-    
+
   }
 
   const leaveRoom = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
-      
+
       router.push("/");
     }
   }
@@ -369,10 +369,10 @@ function ChatContent() {
 
   const renderAvatar = (profileData) => {
     return (
-      <div className="flex w-full justify-center py-4 items-center">
-        <div className="flex justify-center items-center flex-col -top-[55px] left-0 right-0 w-full">
+      <div className="flex bg-white rounded-lg justify-between w-full mt-2 px-2 py-2  items-center">
+        <div className="flex  items-center w-full">
           <div dangerouslySetInnerHTML={{ __html: profileData?.avatarSvg }}
-            className=" w-[50px] h-[50px] sm:w-[90px] sm:h-[90px]  p-[4px] sm:p-[px] lg:p-[15px] lg:w-[110px] lg:h-[110px] rounded-full shadow-[0px_0px_4px_1px_var(--light-gray)]"
+            className=" w-[25px] h-[25px] mr-5 sm:w-[45px] sm:h-[45px]  p-[4px] sm:p-[8px] lg:p-[8px] lg:w-[45px] lg:h-[45px] rounded-full shadow-[0px_0px_4px_1px_var(--light-gray)]"
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -380,14 +380,20 @@ function ChatContent() {
               borderRadius: '50%',
               backgroundColor: 'white',
               overflow: 'hidden',
-              
-              
+
+
             }}
           />
-          <span className="text-dark-gray font-bold mt-2 text-sm sm:text-xl lg:text-lg cursor-default">
+          <div className="flex flex-col h-full justify-center">
+            <span className="text-dark-gray font-bold text-sm sm:text-xl lg:text-lg cursor-default">
             {profileData?.name.replace('-', ' ')}
           </span>
+          </div>
+          
         </div>
+        <button onClick={leaveRoom} className="text-sm sm:text-lg cursor-pointer  w-fit h-fit py-1 px-4 bg-red-700 text-nowrap rounded-lg text-white">
+          <i className="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     );
   }
@@ -395,45 +401,47 @@ function ChatContent() {
   return (
     <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
       <Header activeComponent={"chat"} setActiveComponent={leaveRoom} />
-      <div className="moc-container flex flex-col bg-gray-100">
-        {otherProfile && usersInRoom ? renderAvatar(otherProfile) : renderAvatar(profile)}
-        <p className=" text-sm py-2 sm:text-lg lg:w-full text-center lg:py-2" dangerouslySetInnerHTML={{
-            __html: otherProfile && usersInRoom
-              ? `You're now chatting with <strong> ${otherProfile?.name.replace('-', ' ')} </strong>`
-              : 'No other users in the chat room yet. Hang on a bit'
-          }} />
-        <div className="flex justify-center text-center relative py-2 my-4 items-center">
-          
-          <div className="absolute z-20 left-0">
-            <div className="">
-              <h1 className=" text-sm sm:text-xl text-dark-gray ">
-                Room Id:<strong>  {currentRoomId || 'Connecting...'}</strong>
-              </h1>
+      <div className="moc-container relative h-[calc(100vh-72px)] mt-[72px] flex flex-col bg-gray-100">
+        <div className="flex flex-col w-full">
+          {otherProfile && usersInRoom ? renderAvatar(otherProfile) : renderAvatar(profile)}
+
+          <div className="flex justify-center relative py-2 my-2 items-center">
+
+            <div className=" w-full justify-start">
+              <div className="w-full ">
+                <h1 className=" text-sm sm:text-xl text-dark-gray text-start ">
+                  Room Id:<strong>  {currentRoomId || 'Connecting...'}</strong>
+                </h1>
+              </div>
             </div>
+
           </div>
-          <button onClick={leaveRoom} className="absolute text-sm sm:text-lg z-20 cursor-pointer right-0 w-fit h-fit py-1 px-4 bg-red-700 text-nowrap rounded-lg text-white">
-            Leave Room
-          </button>
+
         </div>
 
-        <div className="w-full min-h-[400px] bg-white rounded-lg">
-          <div className="flex flex-col h-[400px]  w-full p-4 overflow-y-scroll">
+        <div className="w-full h-full ">
+          <div className="flex flex-col h-[calc(100%-72px)] bg-white rounded-lg  w-full p-4 overflow-y-scroll">
+            <p className=" text-xs py-2 text-light-gray sm:text-lg lg:w-full text-center lg:py-2" dangerouslySetInnerHTML={{
+              __html: otherProfile && usersInRoom
+                ? `You're now chatting with <strong> ${otherProfile?.name.replace('-', ' ')} </strong>`
+                : 'No other users in the chat room yet. Hang on a bit'
+            }} />
             {messages.map((msg, index) => (
               <div className={`flex  w-full  ${msg.sender === socketRef.current?.id ? "justify-end" : msg.sender === "system" ? "justify-center py-2" : "justify-start"} `} key={index}>
-                
-                  <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
-                    <div
-                      className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
-                    >
-                      {msg?.text || "Message not available"}
-                    </div>
-                    {msg.timestamp && (
-                      <span className={`text-xs text-nowrap mx-4 h-full flex text-light-gray ${msg.sender === "system" ? "hidden" : "items-end"}`}>
-                        {msg.timestamp}
-                      </span>
-                    )}
+
+                <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
+                  <div
+                    className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
+                  >
+                    {msg?.text || "Message not available"}
                   </div>
-              
+                  {msg.timestamp && (
+                    <span className={`text-xs text-nowrap mx-4 h-full flex text-light-gray ${msg.sender === "system" ? "hidden" : "items-end"}`}>
+                      {msg.timestamp}
+                    </span>
+                  )}
+                </div>
+
 
               </div>
             ))}
@@ -445,7 +453,7 @@ function ChatContent() {
           </div>
         </div>
 
-        <div className="py-4 rounded-lg mt-2 flex">
+        <div className="py-4 rounded-lg absolute bottom-2 z-20 w-full  flex">
           <input
             ref={inputRef}
             type="text"
