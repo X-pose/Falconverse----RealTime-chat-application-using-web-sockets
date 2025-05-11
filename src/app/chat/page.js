@@ -399,7 +399,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex flex-col relative items-center justify-center w-full h-screen bg-gray-100">
+    <div className="flex flex-col relative items-center justify-center w-full bg-gray-100">
       <Header activeComponent={"chat"} setActiveComponent={leaveRoom} />
       <div className="moc-container relative h-[calc(100vh-72px)] mt-[72px] flex flex-col bg-gray-100">
         <div className="flex flex-col w-full">

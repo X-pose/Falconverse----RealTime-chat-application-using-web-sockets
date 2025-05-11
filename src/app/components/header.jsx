@@ -39,7 +39,7 @@ const Header = ({ activeComponent, setActiveComponent }) => {
                             className="rounded-full w-[24px] h-[24px] sm:w-[64px] sm:h-[64px] lg:w-[48px] lg:h-[48px]"
                         />
                         <div className='ml-2 lg:ml-4'>
-                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-[700] fal-dark-gray">Falconverse</h2>
+                            <h2 className="text-xl sm:text-2xl lg:text-3xl font-[700] fal-dark-gray"><span>Fal</span><span className=' text-light-gray'>converse</span></h2>
                             <p className=" text-xs sm:text-sm lg:text-sm fal-light-gray">Privacy focused chat app</p>
                         </div>
                         </div>
