@@ -169,6 +169,7 @@ export default function Home() {
                 height={100}
                 className="w-full object-contain"
                 unoptimized={true}
+                priority={true}
               />
             </div>
           </div>

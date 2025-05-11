@@ -399,7 +399,7 @@ function ChatContent() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center w-full h-screen bg-gray-100">
+    <div className="flex flex-col relative items-center justify-center w-full h-screen bg-gray-100">
       <Header activeComponent={"chat"} setActiveComponent={leaveRoom} />
       <div className="moc-container relative h-[calc(100vh-72px)] mt-[72px] flex flex-col bg-gray-100">
         <div className="flex flex-col w-full">
@@ -453,29 +453,7 @@ function ChatContent() {
           </div>
         </div>
 
-        <div className="py-4 rounded-lg absolute bottom-2 z-20 w-full  flex">
-          <input
-            ref={inputRef}
-            type="text"
-            value={message}
-            onChange={handleMessageChange}
-            onFocus={handleTypingStart}
-            onBlur={handleTypingEnd}
-            placeholder="Type a message..."
-            className="flex-1 bg-white p-2 border border-[var(--light-gray)] text-gray-700 rounded-l-lg outline-none focus:ring-0 focus:border-[var(--light-gray)]"
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!otherPublicKey || !currentRoomId}
-            className={`p-2 rounded-r ${otherPublicKey && currentRoomId
-              ? "bg-[var(--dark-gray)] text-white cursor-pointer hover:bg-white hover:text-[var(--dark-gray)] hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300"
-              : "bg-[var(--light-gray)] text-white cursor-not-allowed"
-              }`}
-          >
-            Send
-          </button>
-        </div>
+        
 
         {openCreatePopup && (
           <>
@@ -530,6 +508,29 @@ function ChatContent() {
           </>
         )}
       </div>
+      <div className="py-4 moc-container rounded-lg absolute bottom-2 z-20 w-full  flex">
+          <input
+            ref={inputRef}
+            type="text"
+            value={message}
+            onChange={handleMessageChange}
+            onFocus={handleTypingStart}
+            onBlur={handleTypingEnd}
+            placeholder="Type a message..."
+            className="flex-1 bg-white p-2 border border-[var(--light-gray)] text-gray-700 rounded-l-lg outline-none focus:ring-0 focus:border-[var(--light-gray)]"
+            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+          />
+          <button
+            onClick={sendMessage}
+            disabled={!otherPublicKey || !currentRoomId}
+            className={`p-2 rounded-r ${otherPublicKey && currentRoomId
+              ? "bg-[var(--dark-gray)] text-white cursor-pointer hover:bg-white hover:text-[var(--dark-gray)] hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300"
+              : "bg-[var(--light-gray)] text-white cursor-not-allowed"
+              }`}
+          >
+            Send
+          </button>
+        </div>
     </div>
   );
 }
