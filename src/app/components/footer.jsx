@@ -15,23 +15,23 @@ const Footer = () => {
 
                 </div>
                 <div className=' flex text-white justify-center py-6 sm:py-8'>
-                    <ul className='flex space-x-2 sm:space-x-4'>
+                    <ul className='flex space-x-1 sm:space-x-4'>
                         <li className="text-xs sm:text-lg before:content-['•'] sm:before:mr-4 first:before:hidden">
                             <a href="/privacy" className="hover:text-[var(--light-gray)] transition-colors duration-300">
                                 Privacy Policy
                             </a>
                         </li>
-                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-2 sm:before:mr-4">
+                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-1 sm:before:mr-4">
                             <a href="/terms" className="hover:text-[var(--light-gray)] transition-colors duration-300">
                                 Terms of Service
                             </a>
                         </li>
-                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-2 sm:before:mr-4">
+                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-1 sm:before:mr-4">
                             <a href="/contact" className="hover:text-[var(--light-gray)] transition-colors duration-300">
                                 Contact Us
                             </a>
                         </li>
-                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-2 sm:before:mr-4">
+                        <li className="text-xs sm:text-lg before:content-['•'] before:mr-1 sm:before:mr-4">
                             <a href="/about" className="hover:text-[var(--light-gray)] transition-colors duration-300">
                                 About Us
                             </a>
