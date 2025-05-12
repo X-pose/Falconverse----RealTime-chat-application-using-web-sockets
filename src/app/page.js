@@ -1,15 +1,18 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef, useCallback, Suspense } from "react";
 import Header from "./components/header";
+import Footer from "./components/footer";
 import gsap from "gsap";
 import AvatarManager from './utils/AvatarManager';
 
 
-export default function Home() {
+function HomePage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const actComPara = searchParams.get("ac");
   const [roomId, setRoomId] = useState("");
   const [activeComponent, setActiveComponent] = useState("home");
   const textRefs = useRef([null, null, null]);
@@ -17,6 +20,11 @@ export default function Home() {
   const [profile, setProfile] = useState(null);
   const [openJoinPopup, setOpenJoinPopup] = useState(false);
 
+  useEffect(() => {
+    if (actComPara) {
+      setActiveComponent(actComPara);
+    }
+  }, [actComPara]);
 
   const startAnimation = useCallback(() => {
     const chars = 'abcdefghijklmnopqrstuvwxyz!@#$%^&*()_+-=[]{}|;:,.?';
@@ -129,7 +137,7 @@ export default function Home() {
     setOpenJoinPopup(false);
   }
   return (
-    <div className="w-full flex justify-center items-center ">
+    <div className="w-full flex flex-col justify-center items-center ">
       <Header activeComponent={activeComponent} setActiveComponent={setActiveComponent} />
       <div className="moc-container">
 
@@ -283,7 +291,16 @@ export default function Home() {
           </>
         )}
       </div>
+      <Footer />
     </div>
 
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <HomePage />
+    </Suspense>
   );
 }

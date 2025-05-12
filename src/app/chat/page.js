@@ -1,8 +1,7 @@
 "use client";
 
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, useRef, Suspense } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
-import { Suspense } from "react";
 import io from "socket.io-client";
 import AvatarManager from '../utils/AvatarManager';
 import {
@@ -35,10 +34,12 @@ function ChatContent() {
   const [usersInRoom, setUsersInRoom] = useState(false);
   const [copySuccess, setCopySuccess] = useState(false);
   const [copyLinkSuccess, setCopyLinkSuccess] = useState(false);
+  const [socketError, setSocketError] = useState(null);
   const typingTimeoutRef = useRef(null);
   const otherUserNameRef = useRef(null);
   const typingUserRef = useRef(null);
   const messagesEndRef = useRef(null);
+  
 
   // Use refs to access latest state in event callbacks
   const socketRef = useRef(null);
@@ -49,6 +50,14 @@ function ChatContent() {
   useEffect(() => {
     currentRoomIdRef.current = currentRoomId;
   }, [currentRoomId]);
+
+   useEffect(() => {
+    // Check if no valid params are present
+    if (!joinRoomId && !create && !invitedRoomId) {
+      router.push('/'); // Redirect to home page
+    }
+  }, [joinRoomId, create, invitedRoomId, router]);
+
 
   //Scroll to bottom of chat
   useEffect(() => {
@@ -236,9 +245,10 @@ function ChatContent() {
     });
 
     socket.on("error", (errorMessage) => {
-      console.error("Socket error:", errorMessage);
-      router.push("/");
-      alert(errorMessage);
+      
+      setSocketError(errorMessage);
+      //router.push("/");
+      
     });
   };
 
@@ -376,8 +386,6 @@ function ChatContent() {
 
   }
 
-
-
   const leaveRoom = () => {
     if (socketRef.current) {
       socketRef.current.disconnect();
@@ -386,6 +394,10 @@ function ChatContent() {
     }
   }
 
+  const closeSocketErrorPopup = () => {
+    setSocketError(null);
+    router.push("/");
+  }
 
   const renderAvatar = (profileData) => {
     return (
@@ -474,9 +486,6 @@ function ChatContent() {
           <div ref={messagesEndRef} />
         </div>
 
-
-
-
         {openCreatePopup && (
           <>
             <div className="fixed inset-0 flex items-center justify-center bg-black opacity-50 z-50"></div>
@@ -522,6 +531,28 @@ function ChatContent() {
                   <div className="flex justify-center">
                     <button onClick={closeCreatePopup} className="px-4 bg-white group text-[var(--light-gray)] py-2 rounded-full hover:border-[var(--dark-gray)] border-2 border-[var(--light-gray)] transition-all duration-300 mt-4">
                       <p className="group-hover:text-[var(--dark-gray)] text-[var(--light-gray)]">Close</p>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
+
+        {socketError && (
+          <>
+            <div className="fixed inset-0 flex items-center justify-center bg-black opacity-50 z-50"></div>
+            <div className="flex absolute inset-0 z-50 justify-center items-center w-full">
+              <div className="bg-white opacity-100 relative p-4 rounded-lg shadow-[0_0_4px_0.01px_var(--light-gray)] w-full max-w-md">
+                <i onClick={closeSocketErrorPopup} className="cursor-pointer fa-regular fa-x absolute z-50 top-0 right-0 bg-white rounded-full p-4"></i>
+                
+
+                <h1 className="text-2xl font-bold my-2 text-center text-dark-gray">Room Unavailable</h1>
+                <p className="text-light-gray text-center">{socketError}</p>
+                <div className="space-y-4 mt-2">
+                  <div className="flex justify-center">
+                    <button onClick={closeSocketErrorPopup} className="px-4 bg-white group text-[var(--light-gray)] py-2 rounded-full hover:border-[var(--dark-gray)] border-2 border-[var(--light-gray)] transition-all duration-300 mt-4">
+                      <p className="group-hover:text-[var(--dark-gray)] text-[var(--light-gray)]">Understood</p>
                     </button>
                   </div>
                 </div>
