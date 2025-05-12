@@ -265,15 +265,18 @@ function ChatContent() {
 
     try {
       const encrypted = await encryptMessage(otherPublicKey, message);
+      // Get time
+      const timestamp = getCurrentTime();
+
       socketRef.current.emit("send-message", {
         roomId: currentRoomIdRef.current,
         message: encrypted,
         senderId: socketRef.current.id,
-        profile: profile
+        profile: profile,
+        timestamp: timestamp
       });
 
-      // Get current time in the same format as the server
-      const timestamp = getCurrentTime();
+      
 
       setMessages((prev) => [
         ...prev,
@@ -338,7 +341,7 @@ function ChatContent() {
     if (currentRoomId) {
       navigator.clipboard.writeText(currentRoomId)
         .then(() => {
-          console.log('Room ID copied to clipboard');
+          
           setCopySuccess(true);
           setTimeout(() => {
             closeCreatePopup();
@@ -352,9 +355,9 @@ function ChatContent() {
 
   const copyRoomInvite = () => {
     if (currentRoomId) {
-      navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_PRODUCTION_URL}/chat?invite=${currentRoomId}`)
+      navigator.clipboard.writeText(`https://falconverse-chat-app.onrender.com/chat?invite=${currentRoomId}`)
         .then(() => {
-          console.log('Room invite copied to clipboard');
+          
           setCopyLinkSuccess(true);
           setTimeout(() => {
             closeCreatePopup();
@@ -448,7 +451,7 @@ function ChatContent() {
 
               <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
                 <div
-                  className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
+                  className={`w-fit min-w-[100px] px-2 py-1 text-xs sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-light-gray w-full" : "bg-[var(--light-gray)] text-white"} `}
                 >
                   {msg?.text || "Message not available"}
                 </div>
@@ -510,7 +513,7 @@ function ChatContent() {
                   </span>
                   <span className="w-full bg-[var(--dark-gray)] group text-white flex overflow-hidden rounded hover:bg-white hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300">
                     <p className="w-full py-2 px-4 group-hover:text-[var(--dark-gray)]">
-                      {`${process.env.NEXT_PUBLIC_PRODUCTION_URL}/chat?invite=${currentRoomId}` || 'Loading...'}
+                      {`https://falconverse-chat-app.onrender.com/chat?invite=${currentRoomId}` || 'Loading...'}
                     </p>
                     <div onClick={copyRoomInvite} className="cursor-pointer bg-[var(--light-gray)] flex items-center px-4">
                       {copyLinkSuccess ? <i className="fa-solid fa-check"></i> : <i className="fa-regular fa-copy"></i>}

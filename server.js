@@ -94,9 +94,7 @@ app.prepare().then(() => {
     });
 
     // Send message
-    socket.on("send-message", ({ roomId, message, senderId, profile }) => {
-      // Add timestamp to the message
-      const timestamp = getCurrentTime();
+    socket.on("send-message", ({ roomId, message, senderId, profile, timestamp }) => {
       
       // Use profile from parameters or socket data
       const senderProfile = profile || socket.data.profile;
