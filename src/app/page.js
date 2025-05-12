@@ -133,7 +133,7 @@ export default function Home() {
       <Header activeComponent={activeComponent} setActiveComponent={setActiveComponent} />
       <div className="moc-container">
 
-        {activeComponent === "home" && (<div className="min-h-screen flex items-center justify-center ">
+        {activeComponent === "home" && (<div className="min-h-[100dvh] flex items-center justify-center ">
 
           <div className="flex lg:flex-row flex-col justify-center items-center w-full">
             <div className="flex flex-col items-center lg:items-start justify-start w-full lg:w-[60%]">
@@ -177,7 +177,7 @@ export default function Home() {
           {/* */}
         </div>)}
 
-        {activeComponent === "chat" && (<div className="min-h-screen flex items-center justify-center ">
+        {activeComponent === "chat" && (<div className="min-h-[100dvh] flex items-center justify-center ">
           <div className="flex justify-center items-center w-full">
             <div className="bg-white relative p-8 rounded-lg shadow-[0_0_4px_0.01px_var(--light-gray)] w-full max-w-md">
               <div className="absolute flex justify-center items-center flex-col z-20 -top-[55px] left-0 right-0 w-full">

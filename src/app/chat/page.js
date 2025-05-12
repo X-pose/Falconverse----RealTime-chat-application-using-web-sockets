@@ -38,6 +38,7 @@ function ChatContent() {
   const typingTimeoutRef = useRef(null);
   const otherUserNameRef = useRef(null);
   const typingUserRef = useRef(null);
+  const messagesEndRef = useRef(null);
 
   // Use refs to access latest state in event callbacks
   const socketRef = useRef(null);
@@ -48,6 +49,12 @@ function ChatContent() {
   useEffect(() => {
     currentRoomIdRef.current = currentRoomId;
   }, [currentRoomId]);
+
+  //Scroll to bottom of chat
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
 
   // Generate keys first
   useEffect(() => {
@@ -92,10 +99,18 @@ function ChatContent() {
     typingUserRef.current = profile?.name.replace('-', ' ');
   }, [profile]);
 
-  const socketInitializer = async () => {
-    socketRef.current = io("https://falconverse-chat-app.onrender.com/");
-    const socket = socketRef.current;
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
 
+  const socketInitializer = async () => {
+    const HOST_URL = process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_PRODUCTION_URL
+      : process.env.NEXT_PUBLIC_HOST_URL;
+
+    socketRef.current = io(HOST_URL);
+    const socket = socketRef.current;
+    console.log("URL: ", HOST_URL);
     socket.on("connect", () => {
       if (joinRoomId || invitedRoomId) {
         let roomId = joinRoomId || invitedRoomId;
@@ -337,7 +352,7 @@ function ChatContent() {
 
   const copyRoomInvite = () => {
     if (currentRoomId) {
-      navigator.clipboard.writeText(`https://falconverse-chat-app.onrender.com/chat?invite=${currentRoomId}`)
+      navigator.clipboard.writeText(`${process.env.NEXT_PUBLIC_PRODUCTION_URL}/chat?invite=${currentRoomId}`)
         .then(() => {
           console.log('Room invite copied to clipboard');
           setCopyLinkSuccess(true);
@@ -357,6 +372,8 @@ function ChatContent() {
     setCopyLinkSuccess(false);
 
   }
+
+
 
   const leaveRoom = () => {
     if (socketRef.current) {
@@ -386,10 +403,10 @@ function ChatContent() {
           />
           <div className="flex flex-col h-full justify-center">
             <span className="text-dark-gray font-bold text-sm sm:text-xl lg:text-lg cursor-default">
-            {profileData?.name.replace('-', ' ')}
-          </span>
+              {profileData?.name.replace('-', ' ')}
+            </span>
           </div>
-          
+
         </div>
         <button onClick={leaveRoom} className="text-sm sm:text-lg cursor-pointer  w-fit h-fit py-1 px-4 bg-red-700 text-nowrap rounded-lg text-white">
           <i className="fa-solid fa-right-from-bracket"></i>
@@ -401,11 +418,11 @@ function ChatContent() {
   return (
     <div className="flex flex-col relative items-center justify-center w-full bg-gray-100">
       <Header activeComponent={"chat"} setActiveComponent={leaveRoom} />
-      <div className="moc-container relative h-[calc(100vh-72px)] mt-[72px] flex flex-col bg-gray-100">
+      <div className="moc-container relative h-[calc(100dvh-60px)] sm:h-[calc(100dvh-72px)] mt-[60px] sm:mt-[72px] flex flex-col bg-gray-100">
         <div className="flex flex-col w-full">
           {otherProfile && usersInRoom ? renderAvatar(otherProfile) : renderAvatar(profile)}
 
-          <div className="flex justify-center relative py-2 my-2 items-center">
+          <div className="flex justify-center relative sm:py-2 my-2 items-center">
 
             <div className=" w-full justify-start">
               <div className="w-full ">
@@ -419,41 +436,43 @@ function ChatContent() {
 
         </div>
 
-        <div className="w-full h-full ">
-          <div className="flex flex-col h-[calc(100%-72px)] bg-white rounded-lg  w-full p-4 overflow-y-scroll">
-            <p className=" text-xs py-2 text-light-gray sm:text-lg lg:w-full text-center lg:py-2" dangerouslySetInnerHTML={{
-              __html: otherProfile && usersInRoom
-                ? `You're now chatting with <strong> ${otherProfile?.name.replace('-', ' ')} </strong>`
-                : 'No other users in the chat room yet. Hang on a bit'
-            }} />
-            {messages.map((msg, index) => (
-              <div className={`flex  w-full  ${msg.sender === socketRef.current?.id ? "justify-end" : msg.sender === "system" ? "justify-center py-2" : "justify-start"} `} key={index}>
 
-                <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
-                  <div
-                    className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
-                  >
-                    {msg?.text || "Message not available"}
-                  </div>
-                  {msg.timestamp && (
-                    <span className={`text-xs text-nowrap mx-4 h-full flex text-light-gray ${msg.sender === "system" ? "hidden" : "items-end"}`}>
-                      {msg.timestamp}
-                    </span>
-                  )}
+        <div className="flex flex-col max-h-[calc(100%)] h-[calc(100%)] mb-[76px] sm:mb-[72px] bg-white rounded-lg  w-full px-4 pt-2 pb-6 overflow-y-scroll">
+          <p className=" text-xs py-2 text-light-gray sm:text-lg lg:w-full text-center lg:py-2" dangerouslySetInnerHTML={{
+            __html: otherProfile && usersInRoom
+              ? `You're now chatting with <strong> ${otherProfile?.name.replace('-', ' ')} </strong>`
+              : 'No other users in the chat room yet. Hang on a bit'
+          }} />
+          {messages.map((msg, index) => (
+            <div className={`flex  w-full  ${msg.sender === socketRef.current?.id ? "justify-end" : msg.sender === "system" ? "justify-center py-2" : "justify-start"} `} key={index}>
+
+              <div className={`flex  w-fit mb-2 ${msg.sender === socketRef.current?.id ? "flex-row-reverse " : msg.sender === "system" ? "flex-row" : "flex-row"}`}>
+                <div
+                  className={`w-fit min-w-[100px] px-2 py-1 text-sm sm:text-xl rounded relative ${msg.sender === socketRef.current?.id ? "bg-[var(--dark-gray)] text-white ml-auto" : msg.sender === "system" ? "bg-white text-center text-gray-500 w-full" : "bg-[var(--light-gray)] text-white"} `}
+                >
+                  {msg?.text || "Message not available"}
                 </div>
+                {msg.timestamp && (
+                  <span className={`text-xs text-nowrap mx-4 h-full flex text-light-gray ${msg.sender === "system" ? "hidden" : "items-end"}`}>
+                    {msg.timestamp}
+                  </span>
+                )}
+              </div>
 
 
-              </div>
-            ))}
-            {otherProfile && isOtherUserTyping && (
-              <div className="text-sm text-gray-600 flex justify-self-start">
-                <span className="italic ml-2">{otherUserNameRef.current} is typing...</span>
-              </div>
-            )}
-          </div>
+            </div>
+          ))}
+          {otherProfile && isOtherUserTyping && (
+            <div className="text-sm text-gray-600 flex justify-self-start">
+              <span className="italic ml-2">{otherUserNameRef.current} is typing...</span>
+            </div>
+          )}
+
+          <div ref={messagesEndRef} />
         </div>
 
-        
+
+
 
         {openCreatePopup && (
           <>
@@ -491,7 +510,7 @@ function ChatContent() {
                   </span>
                   <span className="w-full bg-[var(--dark-gray)] group text-white flex overflow-hidden rounded hover:bg-white hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300">
                     <p className="w-full py-2 px-4 group-hover:text-[var(--dark-gray)]">
-                      {`https://falconverse-chat-app.onrender.com/chat?invite=${currentRoomId}` || 'Loading...'}
+                      {`${process.env.NEXT_PUBLIC_PRODUCTION_URL}/chat?invite=${currentRoomId}` || 'Loading...'}
                     </p>
                     <div onClick={copyRoomInvite} className="cursor-pointer bg-[var(--light-gray)] flex items-center px-4">
                       {copyLinkSuccess ? <i className="fa-solid fa-check"></i> : <i className="fa-regular fa-copy"></i>}
@@ -509,28 +528,28 @@ function ChatContent() {
         )}
       </div>
       <div className="py-4 moc-container rounded-lg absolute bottom-2 z-20 w-full  flex">
-          <input
-            ref={inputRef}
-            type="text"
-            value={message}
-            onChange={handleMessageChange}
-            onFocus={handleTypingStart}
-            onBlur={handleTypingEnd}
-            placeholder="Type a message..."
-            className="flex-1 bg-white p-2 border border-[var(--light-gray)] text-gray-700 rounded-l-lg outline-none focus:ring-0 focus:border-[var(--light-gray)]"
-            onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-          />
-          <button
-            onClick={sendMessage}
-            disabled={!otherPublicKey || !currentRoomId}
-            className={`p-2 rounded-r ${otherPublicKey && currentRoomId
-              ? "bg-[var(--dark-gray)] text-white cursor-pointer hover:bg-white hover:text-[var(--dark-gray)] hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300"
-              : "bg-[var(--light-gray)] text-white cursor-not-allowed"
-              }`}
-          >
-            Send
-          </button>
-        </div>
+        <input
+          ref={inputRef}
+          type="text"
+          value={message}
+          onChange={handleMessageChange}
+          onFocus={handleTypingStart}
+          onBlur={handleTypingEnd}
+          placeholder="Type a message..."
+          className="flex-1 bg-white p-2 border border-[var(--light-gray)] text-gray-700 rounded-l-lg outline-none focus:ring-0 focus:border-[var(--light-gray)]"
+          onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
+        />
+        <button
+          onClick={sendMessage}
+          disabled={!otherPublicKey || !currentRoomId}
+          className={`p-2 rounded-r ${otherPublicKey && currentRoomId
+            ? "bg-[var(--dark-gray)] text-white cursor-pointer hover:bg-white hover:text-[var(--dark-gray)] hover:border-[var(--dark-gray)] border-2 border-[var(--dark-gray)] transition-all duration-300"
+            : "bg-[var(--light-gray)] text-white cursor-not-allowed"
+            }`}
+        >
+          Send
+        </button>
+      </div>
     </div>
   );
 }

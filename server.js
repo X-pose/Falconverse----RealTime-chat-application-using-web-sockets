@@ -1,5 +1,6 @@
 const { createServer } = require("http");
 const { Server } = require("socket.io");
+require('dotenv').config({ path: '.env' });
 const next = require("next");
 const { parse } = require("url");
 
@@ -18,7 +19,9 @@ app.prepare().then(() => {
 
   const io = new Server(server, {
     cors: {
-      origin: "https://falconverse-chat-app.onrender.com",
+      origin: process.env.NODE_ENV === 'production'
+      ? process.env.NEXT_PUBLIC_PRODUCTION_URL
+      : process.env.NEXT_PUBLIC_HOST_URL,
       methods: ["GET", "POST"],
     },
   });
