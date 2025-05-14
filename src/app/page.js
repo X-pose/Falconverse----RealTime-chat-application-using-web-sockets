@@ -139,7 +139,7 @@ function HomePage() {
   return (
     <div className="w-full flex flex-col justify-center items-center ">
       <Header activeComponent={activeComponent} setActiveComponent={setActiveComponent} />
-      <div className="moc-container">
+      <div className="moc-container mt-[50px] lg:mt-0">
 
         {activeComponent === "home" && (<div className="min-h-[100dvh] flex items-center justify-center ">
 
